@@ -72,6 +72,23 @@ def main(_run, _config, _log):
         drop_last=True
     )
 
+    # BUG: It seems that these statements don't get assigned in colab
+    _config['optim'] = {
+      'lr': 1e-3,
+      'momentum': 0.9,
+      'weight_decay': 0.0005, 
+    }
+
+    _config['n_steps'] = 30000
+    _config['label_sets'] = 0
+    _config['batch_size'] = 1
+    _config['lr_milestones'] = [10000, 20000, 30000]
+    _config['align_loss_scaler'] = 1
+    _config['ignore_label'] = 255
+    _config['print_interval'] = 100
+    _config['save_pred_every'] = 10000
+        
+
     _log.info('###### Set optimizer ######')
     optimizer = torch.optim.SGD(model.parameters(), **_config['optim'])
     scheduler = MultiStepLR(optimizer, milestones=_config['lr_milestones'], gamma=0.1)

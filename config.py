@@ -68,7 +68,7 @@ def cfg():
         bbox = False
         scribble = False
 
-        # Set dataset config from the snapshot string
+        # Set dataset config frum the snapshot string
         if 'VOC' in snapshot:
             dataset = 'VOC'
         elif 'COCO' in snapshot:
@@ -103,8 +103,8 @@ def cfg():
 
     path = {
         'log_dir': './runs',
-        'init_path': './pretrained_model/vgg16-397923af.pth',
-        'VOC':{'data_dir': '../../data/Pascal/VOCdevkit/VOC2012/',
+        'init_path': '/content/pretrained_model/vgg16-397923af.pth',
+        'VOC':{'data_dir': '/root/.cache/kagglehub/datasets/ngan2710/voc-devkit-2007-and-2012/versions/1/VOCdevkit/VOC2012/',
                'data_split': 'trainaug',},
         'COCO':{'data_dir': '../../data/COCO/',
                 'data_split': 'train',},

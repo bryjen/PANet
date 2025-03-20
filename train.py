@@ -147,14 +147,16 @@ def main(_run, _config, _log):
         log_loss['loss'] += query_loss
         log_loss['align_loss'] += align_loss
 
-        query_losses.append(query_loss)
-        align_losses.append(align_loss)
 
 
         # print loss and take snapshots
         if (i_iter + 1) % _config['print_interval'] == 0:
             loss = log_loss['loss'] / (i_iter + 1)
             align_loss = log_loss['align_loss'] / (i_iter + 1)
+
+            query_losses.append(loss)
+            align_losses.append(align_loss)
+
             print(f'step {i_iter+1}: loss: {loss}, align_loss: {align_loss}')
 
             

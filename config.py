@@ -40,7 +40,7 @@ def cfg():
         align_loss_scaler = 1
         ignore_label = 255
         print_interval = 100
-        save_pred_every = 10000
+        save_pred_every = 5_000
 
         model = {
             'align': True,
@@ -60,6 +60,7 @@ def cfg():
 
     elif mode == 'test':
         notrain = False
+        snapshot = './runs/PANet_VOC_sets_0_1way_1shot_[train]/1/snapshots/30000.pth'
         snapshot = './runs/PANet_VOC_sets_0_1way_1shot_[train]/1/snapshots/30000.pth'
         n_runs = 5
         n_steps = 1000

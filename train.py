@@ -2,6 +2,8 @@
 import os
 import shutil
 
+import pickle
+import tqdm
 import torch
 import torch.nn as nn
 import torch.optim
@@ -73,6 +75,7 @@ def main(_run, _config, _log):
     )
 
     # BUG: It seems that these statements don't get assigned in colab
+    """
     _config['optim'] = {
       'lr': 1e-3,
       'momentum': 0.9,
@@ -87,17 +90,32 @@ def main(_run, _config, _log):
     _config['ignore_label'] = 255
     _config['print_interval'] = 100
     _config['save_pred_every'] = 10000
-        
+    """
+
+    _log.info('')
+    _log.info('###### Training Config ######')
+    _log.info(f"n-ways:\t\t{_config['task']['n_ways']}")
+    _log.info(f"n-shots:\t\t{_config['task']['n_shots']}")
+    _log.info(f"n-queries:\t{_config['task']['n_queries']}")
+    _log.info(f"PAR?:\t\t{_config['model']['align']}")
+    _log.info('')
+
 
     _log.info('###### Set optimizer ######')
     optimizer = torch.optim.SGD(model.parameters(), **_config['optim'])
     scheduler = MultiStepLR(optimizer, milestones=_config['lr_milestones'], gamma=0.1)
     criterion = nn.CrossEntropyLoss(ignore_index=_config['ignore_label'])
 
+    # extern
+    query_losses = []
+    align_losses = []
+
     i_iter = 0
     log_loss = {'loss': 0, 'align_loss': 0}
     _log.info('###### Training ######')
-    for i_iter, sample_batched in enumerate(trainloader):
+    for i_iter, sample_batched in tqdm.tqdm(enumerate(trainloader)):
+        # print(i_iter)
+
         # Prepare input
         support_images = [[shot.cuda() for shot in way]
                           for way in sample_batched['support_images']]
@@ -129,6 +147,9 @@ def main(_run, _config, _log):
         log_loss['loss'] += query_loss
         log_loss['align_loss'] += align_loss
 
+        query_losses.append(query_loss)
+        align_losses.append(align_loss)
+
 
         # print loss and take snapshots
         if (i_iter + 1) % _config['print_interval'] == 0:
@@ -136,10 +157,22 @@ def main(_run, _config, _log):
             align_loss = log_loss['align_loss'] / (i_iter + 1)
             print(f'step {i_iter+1}: loss: {loss}, align_loss: {align_loss}')
 
+            
         if (i_iter + 1) % _config['save_pred_every'] == 0:
             _log.info('###### Taking snapshot ######')
             torch.save(model.state_dict(),
                        os.path.join(f'{_run.observers[0].dir}/snapshots', f'{i_iter + 1}.pth'))
+
+            query_losses_path = os.path.join(f'{_run.observers[0].dir}/snapshots', f'query_losses_{i_iter + 1}.pkl')
+            with open(query_losses_path, 'wb') as f:
+              pickle.dump(query_losses, f)
+            _log.info(f"Saved query losses to \"{query_losses_path}\"")
+
+            align_losses_path = os.path.join(f'{_run.observers[0].dir}/snapshots', f'align_losses_{i_iter + 1}.pkl')
+            with open(align_losses_path, 'wb') as f:
+              pickle.dump(align_losses, f)
+            _log.info(f"Saved align losses to \"{align_losses_path}\"")
+
 
     _log.info('###### Saving final model ######')
     torch.save(model.state_dict(),

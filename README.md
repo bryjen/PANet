@@ -2,7 +2,9 @@
 
 This repository contains code from the ICCV 2019 paper [PANet: Few-Shot Image Semantic Segmentation with Prototype Alignment](https://arxiv.org/abs/1908.06391).
 
-This is a recreation as part of an Image Processing class. A potential contribution is the addition of `.ipynb` notebooks meant specifically to run on Google Colab, allowing for potentially anyone to replicate the results from the original paper - given enough time and computation power.
+This is a recreation as part of an Image Processing class. A contribution is the addition of `.ipynb` notebooks meant specifically to run on Google Colab, allowing for potentially anyone to replicate the results from the original paper - given enough time and computation power.
+
+<br/>
 
 ## Getting Started
 ### Running On Colab
@@ -19,11 +21,11 @@ However, if anyone is having problems, please contact me [here](mailto:miguelbry
 The original repo was meant to be run locally.
 See the instructions from the original repository [here](https://github.com/kaixin96/PANet).
 
+<br/>
 
 ## Credits
 All credit is due to the original authors.
 If this is helpful to you, make sure to view their [github repository](https://github.com/kaixin96/PANet) and [paper](https://arxiv.org/abs/1908.06391).
-
 
 BibTeX reference is as follows:
 ```
